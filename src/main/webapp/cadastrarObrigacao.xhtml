@@ -1,0 +1,304 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:body>
+
+        <ui:composition template="template/layout.xhtml">
+            <ui:define name="corpo">
+
+
+                <div class="page">
+
+
+                    <!-- navbar Barra Superior-->
+                    <header class="header">
+                        <nav class="navbar" style="background-color: #02381e; border-color: #000;">
+                            <div class="container-fluid">
+                                <div class="navbar-holder d-flex align-items-center justify-content-between">
+                                    <div class="navbar-header"><a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-reorder" style="color:greenyellow"></i></a><a href="index.xhtml" class="navbar-brand">
+                                            <div class="brand-text d-none d-md-inline-block"><strong style="color: white">ENVIOS ANS</strong></div></a></div>
+                                    <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+
+                                        <!-- Log out-->
+                                        <li class="nav-item"><a href="telaLogin.xhtml" data-toggle="modal" data-target="#logoutModal" class="nav-link logout"> <span class="d-none d-sm-inline-block"></span><i class="fa fa-power-off" title="Trocar de Usuário"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+
+                    <!-- Modal Logout -->
+                    <div class="modal" id="logoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Trocar de Usuário <i class="fa fa-lock"></i></h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Tem certeza que deseja sair?</p>
+                                    <div class="actionsBtns">
+                                        <form>
+                                            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.href = 'telaLogin.xhtml';">Sim</button>
+                                            <button class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="breadcrumb-holder">
+                        <div class="container-fluid">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.xhtml">Home</a></li>
+                                <li class="breadcrumb-item active">Cadastrar Obrigação</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Corpo da Página-->
+                    <section class="forms">
+                        <div class="container-fluid">
+
+                            <p:growl escape="true" id="msgCad" 
+                                     autoUpdate="true" 
+                                     showDetail="true"
+                                     showSummary="true"/>
+
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="card-header d-flex align-items-center">
+                                            <h4>Seleção</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="i-checks">
+                                                <input id="rbNovaOb" type="radio" value="Nova Obrigação" checked="" name="RCObrigacao" class="form-control-custom radio-custom"/>
+                                                <label for="rbNovaOb">Nova Obrigação</label>
+                                            </div>
+                                            <div class="i-checks">
+                                                <input id="rbNovoPr" type="radio" value="Nova Linha (Add Prazo)" name="RCObrigacao" class="form-control-custom radio-custom"/>
+                                                <label for="rbNovoPr">Nova Linha (Add Prazo)</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <form class="form-horizontal" jsf:id="formSelecObrig" jsf:prependId="false">
+                                        <div class="card-header d-flex align-items-center">
+                                            <h4>Obrigações</h4>
+                                        </div>
+                                        <div class="input-group mb-3">
+                                            <select name="Obrigaçoes" id="slcObrigacoes" class="form-control" >
+                                                <option>Selecione uma Obrigação</option> 
+                                                <c:forEach var="obrigacao" items="${obrigacaoMB.listaObrigacoesExistente}">  
+                                                    <option jsf:id="idObrigacao"
+                                                            jsf:value="#{obrigacaoMB.obrigacaoSelecionada}">
+                                                        ${obrigacao.toString()}
+                                                    </option>  
+                                                </c:forEach> 
+                                            </select>
+
+
+                                            <div class="input-group-append">
+
+                                                <input type="submit" id="btnAcessarPrazo" value="Acessar" class="btn btn-primary" >
+                                                </input> 
+
+
+                                                <p:commandButton id="btnObri" style="display: none" 
+                                                                 actionListener="#{obrigacaoMB.novaLinhaObrigacao()}" update="cadPrazo"
+                                                                 process="@parent" oncomplete="document.getElementById('formCadPrazo').style.display = 'block'; verificaCampos();"
+                                                                 immediate="true">
+                                                </p:commandButton>
+
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                    <form class="form-control" jsf:id="formCadObrigacao" jsf:prependId="false">
+                                        <div class="card">
+                                            <div class="card-header d-flex align-items-center">
+                                                <h4>Nova Obrigação</h4>
+                                            </div>
+                                            <div class="card-body" jsf:id="cadObrigacao">
+
+                                                <div class="form-group">
+                                                    <textarea jsf:value="#{obrigacaoMB.obrigacao.nomeObrigacao}" jsf:id="nomeObrigacao" required="true"
+                                                              placeholder="Nome da Obrigação" class="form-control"/>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>Responsáveis</label>
+                                                    <p:selectCheckboxMenu id="responsaveis" value="#{obrigacaoMB.listaResponsaveisSelecionados}" label="Responsáveis"
+                                                                          required="true" filter="true" filterMatchMode="contains" multiple="true" style="width:100%;">
+                                                        <f:selectItems value="#{obrigacaoMB.listaResponsaveis}" />
+                                                    </p:selectCheckboxMenu>
+
+                                                </div>
+
+
+                                                <button type="submit" class="btn btn-primary" jsf:action="#{obrigacaoMB.adicionaObrigacao()}" >Cadastrar</button>
+
+
+
+                                                <p:commandButton id="btnCadastrarObri" style="display: none" action="#{obrigacaoMB.adicionaObrigacao()}"
+                                                                 process="@parent" oncomplete="document.location.reload(true);"
+                                                                 immediate="true">
+                                                </p:commandButton>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                </div>
+                                <form class="form-control" jsf:id="formCadPrazo" jsf:prependId="false">
+                                    <div class="card-header d-flex align-items-center">
+                                        <h4>Adicionar Prazo</h4>
+                                    </div>
+
+                                    <div class="card-body" jsf:id="cadPrazo">
+                                        <div class="form-group">
+                                            <label>Obrigação</label>
+                                            <textarea id="ob" jsf:value="#{obrigacaoMB.prazo.nomeObrigacao}" readonly="true" 
+                                                      placeholder="Nome da Obrigação" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">       
+                                            <label>Fundamentação</label>
+                                            <textarea id="fund" jsf:value="#{obrigacaoMB.prazo.fundamentacao}"
+                                                      placeholder="Fundamentação" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">       
+                                            <label>Competência</label>
+                                            <input id="competencia" type="text" jsf:value="#{obrigacaoMB.prazo.competencia}" required="true"
+                                                   placeholder="Competência" class="form-control"/>
+                                        </div>
+
+                                        <div class="form-group">       
+                                            <label>Prazo Limite</label>
+                                            <div class="input-group">
+                                                <input class="form-control" id="prazoLimite" required="true"
+                                                       jsf:value="#{obrigacaoMB.prazo.prazoLimite}" name="prazoLimite" type="text" maxlength="10"/>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">       
+                                            <label>Setor</label>
+                                            <input id="setor" type="text" jsf:value="#{obrigacaoMB.prazo.setor}" 
+                                                   placeholder="Setor" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">       
+                                            <label>Responsável</label>
+                                            <input id="resp" type="text" jsf:value="#{obrigacaoMB.prazo.responsavel}" 
+                                                   placeholder="Responsável" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">       
+                                            <label>Penalidade</label>
+                                            <textarea id="pena" jsf:value="#{obrigacaoMB.prazo.penalidade}" 
+                                                      placeholder="Penalidade" class="form-control"/>
+                                        </div>
+                                        <div class="form-group">       
+                                            <label>Observações</label>
+                                            <textarea id="obs" jsf:value="#{obrigacaoMB.prazo.observacoes}" 
+                                                      placeholder="Observações" class="form-control" aria-describedby="obsInfo"/>
+                                            <small id="obsInfo" class="form-text text-muted">
+                                                Observação adicional sobre o envio.
+                                            </small>
+                                        </div>
+
+
+                                        <button type="submit" class="btn btn-primary" jsf:action="#{obrigacaoMB.adicionaPrazo()}" >Cadastrar</button>
+
+                                    </div>
+                                </form>
+
+
+
+                            </div>
+                        </div>
+                    </section>
+
+                    <footer class="main-footer" style="background-color: #02381e; border-color: #000;">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p style="color: white">Unimed Centro Oeste Paulista &copy;</p>
+                                </div>
+                                <div class="col-sm-6 text-right">
+                                    <p style="color: white">Desenvolvido por Ericsson Roberto de Barros</p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+
+                <script type="text/javascript">
+                    function verificaCampos() {
+                        if (document.getElementById("fund").value == "") {
+                            document.getElementById("fund").readOnly = false;
+                        } else {
+                            document.getElementById("fund").readOnly = true;
+                        }
+                        if (document.getElementById("setor").value == "") {
+                            document.getElementById("setor").readOnly = false;
+                        } else {
+                            document.getElementById("setor").readOnly = true;
+                        }
+                        if (document.getElementById("resp").value == "") {
+                            document.getElementById("resp").readOnly = false;
+                        } else {
+                            document.getElementById("resp").readOnly = true;
+                        }
+                        if (document.getElementById("pena").value == "") {
+                            document.getElementById("pena").readOnly = false;
+                        } else {
+                            document.getElementById("pena").readOnly = true;
+                        }
+
+                        $('#prazoLimite').datepicker({
+                            format: 'dd/mm/yyyy',
+                            todayHighlight: true,
+                            autoclose: true
+                        });
+                        $('#prazoLimite').inputmask('dd/mm/yyyy');
+                    }
+
+                    var radioSelecionado = "";
+                    document.getElementById('formCadPrazo').style.display = 'none';
+                    document.getElementById('formSelecObrig').style.display = 'none';
+
+                    $(document).on('click', '[name="RCObrigacao"]', function () {
+                        radioSelecionado = $('[name="RCObrigacao"]:checked').val();
+                        if (radioSelecionado == 'Nova Obrigação') {
+                            document.getElementById('formCadPrazo').style.display = 'none';
+                            document.getElementById('formSelecObrig').style.display = 'none';
+                            document.getElementById('formCadObrigacao').style.display = 'block';
+                        } else {
+                            document.getElementById('formSelecObrig').style.display = 'block';
+                            document.getElementById('formCadObrigacao').style.display = 'none';
+
+                        }
+
+                    });
+
+                    $('#formSelecObrig').on('submit', function (e) {
+                        $('#btnObri').click();
+                        e.preventDefault();
+                    });
+
+
+
+
+                </script>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

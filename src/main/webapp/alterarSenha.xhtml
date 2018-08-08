@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:b="http://bootsfaces.net/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Envio - ANS - Nova Senha</title>   
+    </h:head>
+
+    <p:growl escape="true" id="msgEdit" 
+             showDetail="true"
+             showSummary="true">
+        <p:autoUpdate/>         
+    </p:growl>
+    <h:form id="formLogin" >
+        <h:body style="background-color: #02381e" pt:onload="$('.modalNovaSenha').modal('show');">
+
+
+            <b:modal id="amodal" styleClass="modalNovaSenha" closable="false" title="Alterar Senha"
+                     close-on-escape="false" backdrop="false" >
+                <b:panel style="background-color: aliceblue" id="pnlLogin">
+
+                    <p:wizard flowListener="#{obrigacaoMB.verificaLoginNovaSenha}">
+                        <p:tab id="identificacao" title="Identificação">
+
+                            <h:panelGrid columns="2" id="pnlCad">
+                                <b:well>
+                                    <b:label value="Login:" />
+                                    <b:inputText id="login" value="#{obrigacaoMB.login}"
+                                                 required="true" requiredMessage="Campo Login é obrigatório"
+                                                 placeholder="Digite o seu Login" />
+
+                                </b:well>
+                            </h:panelGrid>
+
+                        </p:tab>
+                        <p:tab id="dados" title="Dados">
+                            <b:well >
+                                <b:label value="Nome do Usuário:" />
+                                <b:inputText id="nome2" value="#{obrigacaoMB.novoNome}" disabled="true"
+                                             placeholder="Nome Completo" 
+                                             required="true" requiredMessage="Campo Nome do Usuário é obrigatório"/>
+
+                                <b:label value="Login:" />
+                                <b:inputText id="login2" value="#{obrigacaoMB.novoLogin}" placeholder="Login"
+                                             required="true" requiredMessage="Campo Login é obrigatório"
+                                             />
+
+                                <b:label value="Nova Senha:" />
+                                <b:inputSecret id="senha" value="#{obrigacaoMB.novaSenha}" 
+                                               maxlength="15" placeholder="Digite a nova Senha"  
+                                               required="true" requiredMessage="Campo Senha é obrigatório"/>
+
+                                <p:commandButton  value="Alterar" title="Alterar Usuário" 
+                                                  action="#{obrigacaoMB.alterarNovaSenha()}" update=":formLogin:msgs">
+                                </p:commandButton>
+                            </b:well>
+                        </p:tab>
+                    </p:wizard>
+                </b:panel>
+                <b:commandLink look="success" style="width:10%;"
+                               process="@parent" icon-awesome="home" href="telaLogin.xhtml"/>
+            </b:modal>
+
+
+
+            <!--Barra de Loading-->
+            <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+            <p:dialog widgetVar="statusDialog" modal="false" draggable="false" closable="false" resizable="false" showHeader="false" position="right bottom">
+                <p:graphicImage value="/imagens/loading.gif" />
+            </p:dialog>
+
+        </h:body>
+    </h:form>
+</html>

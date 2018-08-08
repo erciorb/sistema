@@ -1,0 +1,416 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:jsf="http://xmlns.jcp.org/jsf"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:body>
+
+        <ui:composition template="template/layout.xhtml">
+            <ui:define name="corpo">
+                <div class="page">
+                    <!-- navbar Barra Superior-->
+                    <header class="header">
+                        <nav class="navbar" style="background-color: #02381e; border-color: #000;">
+                            <div class="container-fluid">
+                                <div class="navbar-holder d-flex align-items-center justify-content-between">
+                                    <div class="navbar-header"><a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-reorder" style="color:greenyellow"></i></a><a href="index.xhtml" class="navbar-brand">
+                                            <div class="brand-text d-none d-md-inline-block"><strong style="color: white">ENVIOS ANS</strong></div></a></div>
+                                    <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+
+                                        <!-- Log out-->
+                                        <li class="nav-item"><a href="telaLogin.xhtml" data-toggle="modal" data-target="#logoutModal" class="nav-link logout"> <span class="d-none d-sm-inline-block"></span><i class="fa fa-power-off" title="Trocar de Usuário"></i></a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+
+                    <!-- Modal Logout -->
+                    <div class="modal" id="logoutModal" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4>Trocar de Usuário <i class="fa fa-lock"></i></h4>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">x</span></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Tem certeza que deseja sair?</p>
+                                    <div class="actionsBtns">
+                                        <form>
+                                            <button type="button" class="btn btn-success" data-dismiss="modal" onclick="location.href = 'telaLogin.xhtml';">Sim</button>
+                                            <button class="btn btn-danger" data-dismiss="modal">Não</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="breadcrumb-holder">
+                        <div class="container-fluid">
+                            <ul class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="index.xhtml">Home</a></li>
+                                <li class="breadcrumb-item active">Editar Obrigação</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Corpo da Página-->
+                    <section class="forms">
+                        <div class="container-fluid">
+
+                            <p:growl escape="true" id="msgEdit" 
+                                     showDetail="true"
+                                     showSummary="true">
+                                <p:autoUpdate/>         
+                            </p:growl>
+
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <div class="card">
+                                        <div class="card-header d-flex align-items-center">
+                                            <h4>Tipo de Edição</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="i-checks">
+                                                <div class="i-checks">
+                                                    <input id="rbEditprazo" type="radio" value="Editar Prazo Limite" checked="" name="RCEditObrigacao" class="form-control-custom radio-custom"/>
+                                                    <label for="rbEditprazo">Editar Prazo Limite</label>
+                                                </div>
+                                                <input id="rbEditOb" type="radio" value="Editar Obrigação" name="RCEditObrigacao" class="form-control-custom radio-custom"/>
+                                                <label for="rbEditOb">Editar Obrigação</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8" id="selecao">
+                                    <div class="card">
+                                        <div class="card-header d-flex align-items-center">
+                                            <h4>Seleção</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Escolha a Obrigação para exibir os Prazos de Envio.</p>
+                                            <form class="form-horizontal" jsf:id="formSelecObrig" jsf:prependId="false">
+
+                                                <div class="input-group mb-3">
+                                                    <select name="Obrigaçoes" id="slcObrigacoes" class="form-control" >
+                                                        <option>Selecione uma Obrigação</option> 
+                                                        <c:forEach var="obrigacao" items="${obrigacaoMB.listaObrigacoesExistente}">  
+                                                            <option jsf:id="idObrigacao"
+                                                                    jsf:value="#{obrigacaoMB.obrigacaoSelecionada}">
+                                                                ${obrigacao.toString()}
+                                                            </option>  
+                                                        </c:forEach> 
+                                                    </select>
+
+
+                                                    <div class="input-group-append">
+
+                                                        <button type="submit" id="btnAcessarPrazo" class="btn btn-primary" >Acessar
+                                                        </button> 
+
+                                                        <p:commandButton id="btnObri" style="display: none" 
+                                                                         actionListener="#{obrigacaoMB.obtemListaPrazo()}" update="formSelecPrazo"
+                                                                         process="@parent" oncomplete="exibirPrazos();"
+                                                                         immediate="true">
+                                                        </p:commandButton>
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>Escolha o Prazo.</p>
+
+                                            <form class="form-horizontal" jsf:id="formSelecPrazo" jsf:prependId="false">
+
+                                                <div class="input-group mb-3">
+                                                    <select name="Prazos" id="slcPrazos" class="form-control" >
+                                                        <option>Selecione um Prazo</option> 
+                                                        <c:forEach var="prazo" items="${obrigacaoMB.listaPrazo}">  
+                                                            <option jsf:id="idPrazo"
+                                                                    jsf:value="#{obrigacaoMB.prazoSelecionado}">
+                                                                ${prazo.prazoLimite}
+                                                            </option>  
+                                                        </c:forEach> 
+                                                    </select>
+
+
+                                                    <div class="input-group-append">
+
+                                                        <input type="submit" id="btnPrazoEdit" value="Acessar" onclick="$('#btnPra').click();" class="btn btn-primary" >
+                                                        </input> 
+
+                                                        <p:commandButton id="btnPra" style="display: none" 
+                                                                         actionListener="#{obrigacaoMB.tabelaPrazoEnvio()}" update="formEditPrazoLimite"
+                                                                         process="@parent"
+                                                                         immediate="true">
+                                                        </p:commandButton>
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4" id="editSelObrig">
+                                    <div class="card">
+                                        <div class="card-header d-flex align-items-center">
+                                            <h4>Seleção Obrigação</h4>
+                                        </div>
+                                        <div class="card-body">
+                                            <form class="form-horizontal" jsf:id="formSelecObrigEdit" jsf:prependId="false">
+
+                                                <div class="input-group mb-3">
+                                                    <select name="ObrigaçoesEdit" id="slcObrigacoesEdit" class="form-control" >
+                                                        <option>Selecione uma Obrigação</option> 
+                                                        <c:forEach var="obrigacao" items="${obrigacaoMB.listaObrigacoesExistente}">  
+                                                            <option jsf:id="idObrigacaoEdit"
+                                                                    jsf:value="#{obrigacaoMB.obrigacaoSelecionada}">
+                                                                ${obrigacao.toString()}
+                                                            </option>  
+                                                        </c:forEach> 
+                                                    </select>
+
+
+                                                    <div class="input-group-append">
+
+                                                        <input type="submit" id="btnAcessarPrazoEdit" value="Acessar" data-loading-text="Carregando..." class="btn btn-primary" >
+                                                        </input> 
+
+                                                        <p:commandButton id="btnObriEdit" style="display: none" 
+                                                                         actionListener="#{obrigacaoMB.obtemNomeObrigacaoSelecionada()}" update="formEditObri"
+                                                                         process="@parent"
+                                                                         immediate="true">
+                                                        </p:commandButton>
+
+                                                    </div>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6" id="editObrig">
+                                    <form class="form-control" jsf:id="formEditObri" jsf:prependId="false">
+                                        <div class="card">
+                                            <div class="card-header d-flex align-items-center">
+                                                <h4>Editar Obrigação</h4>
+                                            </div>
+                                            <div class="card-body">
+
+
+                                                <div class="form-group">
+                                                    <label>Obrigação</label>
+                                                    <textarea jsf:value="#{obrigacaoMB.nomeObrigacao}" required="true"
+                                                              placeholder="Nome da Obrigação" class="form-control"/>
+                                                </div>
+
+                                                <div class="form-group">       
+                                                    <label>Fundamentação</label>
+                                                    <textarea jsf:value="#{obrigacaoMB.prazo.fundamentacao}" required="true"
+                                                              placeholder="Fundamentação" class="form-control"/>
+                                                </div>
+
+                                                <div class="form-group">       
+                                                    <label>Setor</label>
+                                                    <input type="text" jsf:value="#{obrigacaoMB.prazo.setor}" required="true" 
+                                                           placeholder="Setor" class="form-control"/>
+                                                </div>
+                                                <div class="form-group">       
+                                                    <label>Responsável</label>
+                                                    <input type="text" jsf:value="#{obrigacaoMB.prazo.responsavel}" required="true"
+                                                           placeholder="Responsável" class="form-control"/>
+                                                </div>
+                                                <div class="form-group">       
+                                                    <label>Penalidade</label>
+                                                    <textarea jsf:value="#{obrigacaoMB.prazo.penalidade}" required="true"
+                                                              placeholder="Penalidade" class="form-control"/>
+                                                </div>
+
+
+                                                <button type="submit" class="btn btn-primary" jsf:action="#{obrigacaoMB.editarObrigacao()}" >Salvar</button>
+                                                <button class="btn btn-danger" onclick="$('#btnObriExcluir').click();" >Excluir Obrigação</button>
+
+                                                <p:commandButton id="btnObriExcluir" style="display: none" 
+                                                                 actionListener="#{obrigacaoMB.excluirObrigacao()}" 
+                                                                 process="@parent"
+                                                                 immediate="true">
+                                                </p:commandButton>
+
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <ui:fragment rendered="#{obrigacaoMB.prazo.fundamentacao != null}">
+                                    <form class="form-control" 
+                                          jsf:id="formEditPrazoLimite" jsf:prependId="false">
+
+
+                                        <div class="card-body">
+                                            <div class="card-header d-flex align-items-center">
+                                                <h4>Editar Prazo Limite</h4>
+                                            </div>
+
+
+
+                                            <div class="form-group">
+                                                <label>Obrigação</label>
+                                                <textarea jsf:value="#{obrigacaoMB.prazo.nomeObrigacao}" readonly="true"
+                                                          placeholder="Nome da Obrigação" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">       
+                                                <label>Fundamentação</label>
+                                                <textarea jsf:value="#{obrigacaoMB.prazo.fundamentacao}" readonly="true"
+                                                          placeholder="Fundamentação" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">       
+                                                <label>Competência</label>
+                                                <input type="text" id="competencia" jsf:value="#{obrigacaoMB.prazo.competencia}" required="true"
+                                                       placeholder="Competência" class="form-control"/>
+                                            </div>
+
+                                            <div class="form-group">       
+                                                <label>Prazo Limite</label>
+                                                <div class="input-group">
+                                                    <input class="form-control" id="dtPrazo" required="true"
+                                                           jsf:value="#{obrigacaoMB.prazo.prazoLimite}" name="datePrazo" type="text" maxlength="10"/>
+                                                </div>
+                                            </div>
+
+
+                                            <ui:fragment rendered="#{obrigacaoMB.prazo.dataEnvio != null}">
+                                                <div class="form-group">       
+                                                    <label>Data de Cumprimento</label>
+                                                    <div class="input-group">
+                                                        <input class="form-control" id="dataEnvio" 
+                                                               jsf:value="#{obrigacaoMB.prazo.dataEnvio}" name="dateEnvio" type="text" maxlength="10"/>
+                                                    </div>
+                                                </div>
+                                            </ui:fragment>
+
+                                            <div class="form-group">       
+                                                <label>Setor</label>
+                                                <input type="text" jsf:value="#{obrigacaoMB.prazo.setor}" readonly="true" 
+                                                       placeholder="Setor" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">       
+                                                <label>Responsável</label>
+                                                <input type="text" jsf:value="#{obrigacaoMB.prazo.responsavel}" readonly="true"
+                                                       placeholder="Responsável" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">       
+                                                <label>Penalidade</label>
+                                                <textarea jsf:value="#{obrigacaoMB.prazo.penalidade}" readonly="true"
+                                                          placeholder="Penalidade" class="form-control"/>
+                                            </div>
+                                            <div class="form-group">       
+                                                <label>Observações</label>
+                                                <textarea jsf:value="#{obrigacaoMB.prazo.observacoes}" 
+                                                          placeholder="Observações" class="form-control" aria-describedby="obsInfo"/>
+                                                <small id="obsInfo" class="form-text text-muted">
+                                                    Observação adicional sobre o envio.
+                                                </small>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary" jsf:action="#{obrigacaoMB.enviarObrigacao()}" >Salvar</button>
+                                            <button type="submit" class="btn btn-danger" onclick="$('#btnExcluirPrazo').click();">Excluir Prazo</button>
+
+                                            <p:commandButton id="btnExcluirPrazo" style="display: none" action="#{obrigacaoMB.excluirPrazo()}"
+                                                             process="@parent" 
+                                                             immediate="true">
+                                            </p:commandButton>
+                                        </div>
+
+                                    </form>
+                                </ui:fragment>
+                            </div>
+                        </div>
+                    </section>
+                    <footer class="main-footer" style="background-color: #02381e; border-color: #000;">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p style="color: white">Unimed Centro Oeste Paulista &copy;</p>
+                                </div>
+                                <div class="col-sm-6 text-right">
+                                    <p style="color: white">Desenvolvido por Ericsson Roberto de Barros</p>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+                <script type="text/javascript">
+
+                    $('input[name="datePrazo"]').datepicker({
+                        format: 'dd/mm/yyyy',
+                        todayHighlight: true,
+                        autoclose: true
+                    });
+                    $('#dtPrazo').inputmask('dd/mm/yyyy');
+
+                    $('input[name="dateEnvio"]').datepicker({
+                        format: 'dd/mm/yyyy',
+                        todayHighlight: true,
+                        autoclose: true
+                    });
+                    $('#dataEnvio').inputmask('dd/mm/yyyy');
+
+
+                    document.getElementById('selecao').style.display = 'block';
+                    document.getElementById('formEditObri').style.display = 'none';
+                    document.getElementById('editSelObrig').style.display = 'none';
+
+
+                    $(document).on('click', '[name="RCEditObrigacao"]', function () {
+                        if ($('[name="RCEditObrigacao"]:checked').val() == "Editar Obrigação") {
+                            document.getElementById('selecao').style.display = 'none';
+                            document.getElementById('formEditObri').style.display = 'none';
+                            document.getElementById('editSelObrig').style.display = 'block';
+                            document.getElementById('formEditPrazoLimite').style.display = 'none';
+                        }
+                        if ($('[name="RCEditObrigacao"]:checked').val() == "Editar Prazo Limite") {
+                            document.getElementById('formEditObri').style.display = 'none';
+                            document.getElementById('selecao').style.display = 'block';
+                            document.getElementById('editSelObrig').style.display = 'none';
+                        }
+                    });
+
+                    $('#slcPrazos').prop('disabled', true);
+
+                    $('#formSelecObrig').on('submit', function (e) {
+                        $('#btnObri').click();
+                        e.preventDefault();
+                    });
+
+                    $('#formSelecPrazo').on('submit', function (e) {
+                        $('#btnPra').click();
+                        e.preventDefault();
+                    });
+
+                    $('#formSelecObrigEdit').on('submit', function (e) {
+                        $('#btnObriEdit').click();
+                        e.preventDefault();
+                    });
+
+                    function exibirPrazos() {
+                        if (document.getElementById('slcObrigacoes').value != "Selecione uma Obrigação") {
+                            document.getElementById('formSelecPrazo').style.display = 'block';
+                        } else {
+                            $('#slcPrazos').prop('disabled', true);
+                        }
+                    }
+
+                </script>
+
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>
