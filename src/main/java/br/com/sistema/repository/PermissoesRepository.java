@@ -44,14 +44,14 @@ public class PermissoesRepository {
     /* Lista todas as Permissoes */
     @SuppressWarnings("unchecked")
     public List<Permissoes> getLista() {
-        Query query = this.manager.createQuery("SELECT p FROM Permissoes p");
+        Query query = this.manager.createQuery("SELECT p FROM Permissoes p order by p.nomeObrigacao asc");
         return query.getResultList();
     }
     
      /* Lista todas as Permissoes pelo nome do Usuário */
     @SuppressWarnings("unchecked")
     public List<Permissoes> getListaPorNomeUsuario(String nomeUsuario) {
-        TypedQuery<Permissoes> q = this.manager.createQuery("SELECT p FROM Permissoes p where p.nomeUsuario = :nomeUsuario", Permissoes.class);
+        TypedQuery<Permissoes> q = this.manager.createQuery("SELECT p FROM Permissoes p where p.nomeUsuario = :nomeUsuario order by p.nomeObrigacao asc", Permissoes.class);
         q.setParameter("nomeUsuario", nomeUsuario);
 
         try {
@@ -65,7 +65,7 @@ public class PermissoesRepository {
      /* Lista todas as Permissoes pelo nome da Obrigacao */
     @SuppressWarnings("unchecked")
     public List<Permissoes> getListaPorNomeObrigacao(String nomeObrigacao) {
-        TypedQuery<Permissoes> q = this.manager.createQuery("SELECT p FROM Permissoes p where p.nomeObrigacao = :nomeObrigacao", Permissoes.class);
+        TypedQuery<Permissoes> q = this.manager.createQuery("SELECT p FROM Permissoes p where p.nomeObrigacao = :nomeObrigacao order by p.nomeObrigacao asc", Permissoes.class);
         q.setParameter("nomeObrigacao", nomeObrigacao);
 
         try {
