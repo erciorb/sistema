@@ -55,7 +55,7 @@ public class ObrigacaoRepository {
     /* Lista todas as Obrigações */
     @SuppressWarnings("unchecked")
     public List<Obrigacao> getLista() {
-        Query query = this.manager.createQuery("SELECT o FROM Obrigacao o");
+        Query query = this.manager.createQuery("SELECT o FROM Obrigacao o order by o.nomeObrigacao asc");
         return query.getResultList();
     }
 
