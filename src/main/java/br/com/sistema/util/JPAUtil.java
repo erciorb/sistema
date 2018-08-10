@@ -8,6 +8,7 @@ import br.com.sistema.repository.UsuarioRepository;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,6 +46,7 @@ public class JPAUtil implements Filter {
     private EntityManagerFactory factory;
     private List<Prazo> listaPrazo = new ArrayList<>();
     private int cont = 0;
+    Timer timer = null;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -55,6 +57,11 @@ public class JPAUtil implements Filter {
     @Override
     public void destroy() {
         this.factory.close();
+        
+        if (timer != null) {
+            timer.cancel();
+        }
+        System.out.println(" -- TIMER FINALIZADO FIM SESSÃO --");
     }
 
     /* Instancia o Entity Manager*/
@@ -97,29 +104,47 @@ public class JPAUtil implements Filter {
     /* Verifica a cada 24 horas se tem Obrigação chegando ao prazo */
     public void timerEmail() {
 
-        int delay = 1000;   // delay de 5 seg.
-        int interval = 86400000;  // intervalo de 24 horas.
-        Timer timer = new Timer();
+        timer = new Timer();
+
+        java.util.Date agora = Calendar.getInstance().getTime();
+        System.out.println(" AGORA É : " + agora);
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR, 8); // 08:00:00 no servidor de desenvolvimento 
+        c.set(Calendar.MINUTE, 30);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.AM_PM, Calendar.AM); // Caso não for horario com 24 horas
+        java.util.Date horaAgendada = c.getTime();
+        System.out.println(" HORA AGENDADA :" + horaAgendada);
+        System.out.println(" JÁ EXECUTADO :" + agora.after(horaAgendada)); // true or false 
 
         cont++;
         if (cont == 1) {
-            timer.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
+            if (!agora.after(horaAgendada)) { // se hora agendada ainda não chegou então não executa o método senão executa.
+                long delay = horaAgendada.getTime() - agora.getTime();
+                long period = 86400000;
 
-                    cont = 1;
-                    if (cont == 1) {
-                        verificaPrazo();
-                        System.out.println("teste contagem 1 dia");
+                System.out.println(" NO IF :" + delay);
+
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    public void run() {
+
+                        cont = 1;
+                        if (cont == 1) {
+                            System.out.println("TASK MANAGER executa diariamente verificaPrazo()");
+                            verificaPrazo();
+                        }
+                        cont++;
                     }
-                    cont++;
-                }
-            }, delay, interval);
+                }, delay, period);
+            }
         }
 
     }
 
     /* Verifica Prazo de Envio*/
     public void verificaPrazo() {
+        System.out.println("Entrou método verificaPrazo()");
         if (this.listaPrazo == null || this.listaPrazo.isEmpty()) {
             obtemListaObrigacoes();
         }
@@ -176,7 +201,7 @@ public class JPAUtil implements Filter {
                 email.send();
             }
         } catch (EmailException e) {
-            System.out.println(e.getMessage()); 
+            System.out.println(e.getMessage());
         }
     }
 
