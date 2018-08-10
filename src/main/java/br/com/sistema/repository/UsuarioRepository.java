@@ -56,7 +56,8 @@ public class UsuarioRepository {
     /* Lista todas os Usuario */
     @SuppressWarnings("unchecked")
     public List<Usuario> getLista() {
-        Query query = this.manager.createQuery("SELECT u FROM Usuario u");
+        Query query = this.manager.createQuery("SELECT u FROM Usuario u where u.nome <> :adm order by u.nome asc");
+        query.setParameter("adm", "Administrador");
         return query.getResultList();
     }
     
