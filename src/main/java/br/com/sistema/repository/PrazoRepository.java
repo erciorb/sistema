@@ -63,7 +63,7 @@ public class PrazoRepository {
     /* Lista os Prazo por Obrigação */
     @SuppressWarnings("unchecked")
     public List<Prazo> listaPorObrigacao(String nomeObrigacao) {
-        TypedQuery<Prazo> q = this.manager.createQuery("select p FROM Prazo p where p.nomeObrigacao = :nomeObrigacao", Prazo.class);
+        TypedQuery<Prazo> q = this.manager.createQuery("select p FROM Prazo p where p.nomeObrigacao = :nomeObrigacao order by p.prazoLimite asc", Prazo.class);
         q.setParameter("nomeObrigacao", nomeObrigacao);
 
         try {
@@ -91,7 +91,7 @@ public class PrazoRepository {
     /* Lista todas os Prazos */
     @SuppressWarnings("unchecked")
     public List<Prazo> getLista() {
-        Query query = this.manager.createQuery("SELECT p FROM Prazo p");
+        Query query = this.manager.createQuery("SELECT p FROM Prazo p order by p.prazoLimite asc");
         return query.getResultList();
     }
 }
