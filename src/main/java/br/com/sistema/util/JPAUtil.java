@@ -131,7 +131,8 @@ public class JPAUtil implements Filter {
 
                         cont = 1;
                         if (cont == 1) {
-                            System.out.println("TASK MANAGER executa diariamente verificaPrazo()");
+                            java.util.Date hj = Calendar.getInstance().getTime();
+                            System.out.println("TASK MANAGER executa diariamente verificaPrazo() hoje é: " + hj);
                             verificaPrazo();
                         }
                         cont++;
