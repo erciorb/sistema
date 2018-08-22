@@ -14,7 +14,7 @@
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.user" value="ericsson"/>
             <property name="javax.persistence.jdbc.password" value="3R1c550nrb07"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://jws-app-mysql/enviosANS?autoReconnectForPools=true"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://enviosans-mysql/enviosANS?autoReconnectForPools=true"/>
            
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
